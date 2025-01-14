@@ -31,8 +31,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String web = "https://anapioficeandfire.com/api/characters/";
   int radInt = (Random().nextInt(2135) + 1);
   String notedText = "";
+  String request = "";
 
   @override
   void initState() {
@@ -42,18 +44,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // ignore: non_constant_identifier_names
   void RandomCharacter() async {
-    int random = new Random().nextInt(2135) + 1;
-    final url =
-        Uri.parse("https://anapioficeandfire.com/api/characters/$random");
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final json = response.body;
-      Character noted = Character.fromJson(jsonDecode(json));
-      notedText = noted.name;
-      if (noted.aliases.isNotEmpty) notedText += noted.aliases[0];
-      notedText += ", who is a ${noted.gender},\n from ${noted.born}";
-    } else {
-      notedText = "Error al cargar.";
+    try {
+      final url = Uri.parse("$web" "$radInt");
+      request = url.toString();
+      final response = await http.get(url);
+      if (response.statusCode == 200) {
+        final json = response.body;
+        print(json);
+        Character noted = Character.fromJson(jsonDecode(json));
+        notedText = noted.name;
+        notedText += ", who is a ${noted.gender.toLowerCase()} character.";
+        if (noted.born.isNotEmpty) notedText += "\nBorn ${noted.born}.";
+        request = json;
+      }
+    } catch (e) {
+      notedText = "Error al buscar el personaje $radInt.\n Consulta: $request";
     }
     setState(() {}); // Actualiza la Interfaz de Usuario
   }
@@ -65,9 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: const Center(
+      body: Center(
           child: Column(children: [
-        Text("Noted character:"),
+        const Text(
+          "Noted character:",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        SelectableText(notedText),
+        Text(request)
       ])),
     );
   }
