@@ -33,6 +33,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String web = "https://anapioficeandfire.com/api/characters/";
   int radInt = (Random().nextInt(2135) + 1);
+  Character noted = const Character(
+      name: "",
+      gender: "",
+      culture: "",
+      born: "Loading...",
+      died: "Loading...",
+      titles: ["Loading..."],
+      aliases: ["Loading..."],
+      father: "Loading...",
+      mother: "Loading...",
+      spouse: "Loading...",
+      allegiances: ["Loading..."],
+      books: ["Loading..."],
+      povBooks: ["Loading..."],
+      tvSeries: ["Loading..."],
+      playedBy: ["Loading..."]);
   String notedText = "";
   String request = "";
 
@@ -50,15 +66,13 @@ class _MyHomePageState extends State<MyHomePage> {
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final json = response.body;
-        print(json);
-        Character noted = Character.fromJson(jsonDecode(json));
+        noted = Character.fromJson(jsonDecode(json));
         notedText = noted.name;
         notedText += ", who is a ${noted.gender.toLowerCase()} character.";
-        if (noted.born.isNotEmpty) notedText += "\nBorn ${noted.born}.";
         request = json;
       }
     } catch (e) {
-      notedText = "Error al buscar el personaje $radInt.\n Consulta: $request";
+      notedText = "Error loading $radInt.\n Request: $request";
     }
     setState(() {}); // Actualiza la Interfaz de Usuario
   }
@@ -73,12 +87,127 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
           child: Column(children: [
         const Text(
-          "Noted character:",
+          "\nNoted character:",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        SelectableText(notedText),
-        Text(request)
+        Text(notedText),
+        if (noted.playedBy.isNotEmpty)
+          DropdownButton<String>(
+            hint: const Text('PlayedBy'),
+            items: noted.playedBy.map((String param) {
+              return DropdownMenuItem<String>(
+                value: param,
+                child: Text(param),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {});
+            },
+          ),
+        Container(
+          padding: const EdgeInsets.all(20.0),
+          child: SizedBox(
+            child: Table(
+              children: [
+                TableRow(children: [
+                  Text('Culture:\n ${Answer(noted.culture)}',
+                      textAlign: TextAlign.center), // Columna izquierda
+                  Text('Spouse:\n ${Answer(noted.spouse)}',
+                      textAlign: TextAlign.center),
+                ]),
+                TableRow(children: [
+                  Text('Born:\n ${Answer(noted.born)}',
+                      textAlign: TextAlign.center), // Columna izquierda
+                  Text('Died:\n ${Answer(noted.died)}',
+                      textAlign: TextAlign.center), // Columna derecha
+                ]),
+                TableRow(children: [
+                  Column(
+                    children: [
+                      const Text("Titles:"),
+                      ListAnswer(noted.titles),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      const Text("Aliases:"),
+                      ListAnswer(noted.aliases),
+                    ],
+                  ),
+                ]),
+                TableRow(children: [
+                  Text('Father:\n ${Answer(noted.father)}',
+                      textAlign: TextAlign.center), // Columna izquierda
+                  Text('Mother:\n ${Answer(noted.mother)}',
+                      textAlign: TextAlign.center), // Columna derecha
+                ]),
+                TableRow(children: [
+                  Column(
+                    children: [
+                      const Text("Allegiances:"),
+                      ListAnswer(noted.allegiances),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      const Text("Books:"),
+                      ListAnswer(noted.books),
+                    ],
+                  ),
+                ]),
+                TableRow(children: [
+                  Column(
+                    children: [
+                      const Text("povBooks:"),
+                      ListAnswer(noted.povBooks),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      const Text("tvSeries:"),
+                      ListAnswer(noted.tvSeries),
+                    ],
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        ),
       ])),
     );
+  }
+
+  /// Devuelve los datos correspondientes si están rellenos
+  // ignore: non_constant_identifier_names
+  String Answer(String param) {
+    if (param.isNotEmpty) {
+      if (param.startsWith("http")) {
+        // Si es un enlace
+        return "Link";
+      } else {
+        return param;
+      }
+    }
+    return "Not specified.";
+  }
+
+  /// Devuelve los datos correspondientes si están rellenos
+  // ignore: non_constant_identifier_names
+  Widget ListAnswer(List<String> param) {
+    if (param.isNotEmpty) {
+      return DropdownButton<String>(
+        hint: const Text('See'),
+        items: param.map((String param) {
+          return DropdownMenuItem<String>(
+            value: param,
+            child: SelectableText(param),
+          );
+        }).toList(),
+        onChanged: (String? newValue) {
+          setState(() {});
+        },
+      );
+    }
+    return Text("No data known.");
   }
 }
