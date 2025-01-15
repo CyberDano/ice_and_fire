@@ -1,11 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:math';
 
 import 'package:ice_and_fire/character.dart';
 import 'package:ice_and_fire/CharacterList.dart';
-import 'package:ice_and_fire/main.dart';
 
 class Favourites extends StatefulWidget {
   const Favourites({super.key, required this.title});

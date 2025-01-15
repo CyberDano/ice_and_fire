@@ -18,7 +18,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Ice and Fire app',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 100, 167, 255)),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Ice and Fire'),
@@ -34,7 +35,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  Key key = UniqueKey();
   String web = "https://anapioficeandfire.com/api/characters/";
   int radInt = (Random().nextInt(2135) + 1);
   Character noted = const Character(
@@ -55,25 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
       playedBy: ["Loading..."]);
   String notedText = "";
   String request = "";
-
-  /// All characters list
-  // ignore: non_constant_identifier_names
-  void SeeCharactersScreen() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const CharactersList(title: "All characters list")));
-  }
-
-  /// Favourite characters list
-  // ignore: non_constant_identifier_names
-  void FavouritesScreen() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const Favourites(title: "My favourites")));
-  }
 
   @override
   void initState() {
@@ -213,6 +194,25 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  /// All characters list
+  // ignore: non_constant_identifier_names
+  void SeeCharactersScreen() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                const CharactersList(title: "All characters list")));
+  }
+
+  /// Favourite characters list
+  // ignore: non_constant_identifier_names
+  void FavouritesScreen() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Favourites(title: "My favourites")));
+  }
+
   /// Devuelve los datos correspondientes si están rellenos
   // ignore: non_constant_identifier_names
   String Answer(String param) {
@@ -245,11 +245,5 @@ class _MyHomePageState extends State<MyHomePage> {
       );
     }
     return const Text("No data known.");
-  }
-
-  void restartApp() {
-    setState(() {
-      key = UniqueKey();
-    });
   }
 }

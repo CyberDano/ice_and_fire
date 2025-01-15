@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 class Character {
   final String name;
   final String gender;
