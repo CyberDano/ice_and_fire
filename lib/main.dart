@@ -2,7 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
+
 import 'package:ice_and_fire/character.dart';
+import 'package:ice_and_fire/CharacterList.dart';
+import 'package:ice_and_fire/Favourites.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,6 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  Key key = UniqueKey();
   String web = "https://anapioficeandfire.com/api/characters/";
   int radInt = (Random().nextInt(2135) + 1);
   Character noted = const Character(
@@ -51,6 +55,25 @@ class _MyHomePageState extends State<MyHomePage> {
       playedBy: ["Loading..."]);
   String notedText = "";
   String request = "";
+
+  /// All characters list
+  // ignore: non_constant_identifier_names
+  void SeeCharactersScreen() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                const CharactersList(title: "All characters list")));
+  }
+
+  /// Favourite characters list
+  // ignore: non_constant_identifier_names
+  void FavouritesScreen() {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const Favourites(title: "My favourites")));
+  }
 
   @override
   void initState() {
@@ -173,6 +196,19 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton(
+              onPressed: SeeCharactersScreen,
+              child: const Text("See all characters"),
+            ),
+            TextButton(
+              onPressed: FavouritesScreen,
+              child: const Text("My favourites"),
+            ),
+          ],
+        ),
       ])),
     );
   }
@@ -208,6 +244,12 @@ class _MyHomePageState extends State<MyHomePage> {
         },
       );
     }
-    return Text("No data known.");
+    return const Text("No data known.");
+  }
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
   }
 }
