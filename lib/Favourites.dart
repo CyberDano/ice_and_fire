@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:ice_and_fire/character.dart';
+import 'package:ice_and_fire/classes.dart';
 import 'package:ice_and_fire/CharacterList.dart';
 
 class Favourites extends StatefulWidget {

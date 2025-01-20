@@ -1,45 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:ice_and_fire/characterpage.dart';
-import 'dart:math';
 
 import 'package:ice_and_fire/classes.dart';
-import 'package:ice_and_fire/CharacterList.dart';
-import 'package:ice_and_fire/Favourites.dart';
-import 'package:ice_and_fire/housepage.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Ice and Fire app',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 100, 167, 255)),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Ice and Fire'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class CharacterPage extends StatefulWidget {
+  const CharacterPage({super.key, required this.title, required this.web});
   final String title;
+  final String web;
+
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<CharacterPage> createState() => _CharacterPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  String web = "https://anapioficeandfire.com/api/characters/";
-  int radInt = (Random().nextInt(2135) + 1);
+class _CharacterPageState extends State<CharacterPage> {
   Character noted = const Character(
       url: "",
       name: "",
@@ -69,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
   // ignore: non_constant_identifier_names
   void RandomCharacter() async {
     try {
-      final url = Uri.parse("$web" "$radInt");
+      final url = Uri.parse(widget.web);
       request = url.toString();
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -80,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
         request = json;
       }
     } catch (e) {
-      notedText = "Error loading $radInt.\n Request: $request";
+      notedText = "Error loading character.\n Request: $request";
     }
     setState(() {}); // Actualiza la Interfaz de Usuario
   }
@@ -201,40 +175,8 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: SeeCharactersScreen,
-              child: const Text("See all characters"),
-            ),
-            TextButton(
-              onPressed: FavouritesScreen,
-              child: const Text("My favourites"),
-            ),
-          ],
-        ),
       ])),
     );
-  }
-
-  /// All characters list
-  // ignore: non_constant_identifier_names
-  void SeeCharactersScreen() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) =>
-                const CharactersList(title: "All characters list")));
-  }
-
-  /// Favourite characters list
-  // ignore: non_constant_identifier_names
-  void FavouritesScreen() {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => const Favourites(title: "My favourites")));
   }
 
   /// Devuelve los datos correspondientes si están rellenos
@@ -247,22 +189,11 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: () {
               if (param.contains("/characters/")) {
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CharacterPage(
-                      title: "Character",
-                      web: param,
-                    ),
-                  ),
-                );
-              } else if (param.contains("/books/")) {
-                Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => HousePage(
-                              title: "House",
-                              web: param,
-                            )));
+                        builder: (context) =>
+                            CharacterPage(title: "Character", web: param)));
+              } else if (param.contains("/books/")) {
               } else if (param.contains("/houses/")) {}
             },
             child: const Text('Link'));

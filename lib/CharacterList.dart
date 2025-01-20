@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
-import 'package:ice_and_fire/character.dart';
+import 'package:ice_and_fire/classes.dart';
 import 'package:ice_and_fire/Favourites.dart';
 
 class CharactersList extends StatefulWidget {
@@ -18,6 +18,7 @@ class _CharactersListScreenState extends State<CharactersList> {
   late List<Character> characterList = <Character>[];
   String web = "https://anapioficeandfire.com/api/characters/";
   Character novel = const Character(
+      url: "",
       name: "",
       gender: "",
       culture: "",
