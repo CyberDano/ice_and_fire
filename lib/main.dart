@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:ice_and_fire/bookpage.dart';
 import 'package:ice_and_fire/characterpage.dart';
 import 'dart:math';
 
@@ -255,7 +255,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                 );
-              } else if (param.contains("/books/")) {
+              }
+              if (param.contains("/books/")) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -263,9 +264,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               title: "House",
                               web: param,
                             )));
-              } else if (param.contains("/houses/")) {}
+              }
+              if (param.contains("/houses/")) {}
             },
-            child: const Text('Link'));
+            child: Text(param));
       } else {
         return Text(param);
       }
@@ -281,9 +283,40 @@ class _MyHomePageState extends State<MyHomePage> {
         hint: const Text('See'),
         items: param.map((String param) {
           return DropdownMenuItem<String>(
-            value: param,
-            child: SelectableText(param),
-          );
+              value: param,
+              child: TextButton(
+                  onPressed: () {
+                    if (param.contains("/characters/")) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CharacterPage(
+                            title: "Character",
+                            web: param,
+                          ),
+                        ),
+                      );
+                    }
+                    if (param.contains("/houses/")) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HousePage(
+                                    title: "House",
+                                    web: param,
+                                  )));
+                    }
+                    if (param.contains("/books/")) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BookPage(
+                                    title: "Book",
+                                    web: param,
+                                  )));
+                    }
+                  },
+                  child: Text(param)));
         }).toList(),
         onChanged: (String? newValue) {
           setState(() {});

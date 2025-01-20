@@ -1,3 +1,4 @@
+/// Clase para los personajes
 class Character {
   final String url;
   final String name;
@@ -57,6 +58,7 @@ class Character {
   }
 }
 
+/// Clase para las casas
 class House {
   final String url;
   final String name;
@@ -112,5 +114,49 @@ class House {
         ancestralWeapons: List<String>.from(json['ancestralWeapons']),
         cadetBranches: List<String>.from(json['cadetBranches']),
         swornMembers: List<String>.from(json['swornMembers']));
+  }
+}
+
+/// Clase para los libros
+class Book {
+  final String url;
+  final String name;
+  final String isbn;
+  final List<String> authors;
+  final String pages;
+  final String publisher;
+  final String country;
+  final String mediaType;
+  final String released;
+  final List<String> characters;
+  final List<String> povCharacters;
+
+  const Book(
+      {required this.url,
+      required this.name,
+      required this.isbn,
+      required this.authors,
+      required this.pages,
+      required this.publisher,
+      required this.country,
+      required this.mediaType,
+      required this.released,
+      required this.characters,
+      required this.povCharacters});
+
+// Método para crear una instancia de House a partir de JSON
+  factory Book.fromJson(Map<String, dynamic> json) {
+    return Book(
+        url: json['url'],
+        name: json['name'],
+        isbn: json['isbn'],
+        authors: List<String>.from(json['authors']),
+        pages: json['numberOfPages'],
+        publisher: json['publisher'],
+        country: json['country'],
+        mediaType: json['madiaType'],
+        released: json['released'],
+        characters: List<String>.from(json['characters']),
+        povCharacters: List<String>.from(json['povCharacters']));
   }
 }

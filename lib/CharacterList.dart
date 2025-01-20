@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:ice_and_fire/classes.dart';
-import 'package:ice_and_fire/Favourites.dart';
 
 class CharactersList extends StatefulWidget {
   const CharactersList({super.key, required this.title});

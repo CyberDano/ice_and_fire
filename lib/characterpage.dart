@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:ice_and_fire/classes.dart';
+import 'package:ice_and_fire/housepage.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key, required this.title, required this.web});
@@ -69,7 +70,7 @@ class _CharacterPageState extends State<CharacterPage> {
       body: Center(
           child: Column(children: [
         const Text(
-          "\nNoted character:",
+          "\nCharacter:",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Text(notedText),
@@ -189,14 +190,25 @@ class _CharacterPageState extends State<CharacterPage> {
             onPressed: () {
               if (param.contains("/characters/")) {
                 Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CharacterPage(
+                      title: "Character",
+                      web: param,
+                    ),
+                  ),
+                );
+              } else if (param.contains("/books/")) {
+                Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) =>
-                            CharacterPage(title: "Character", web: param)));
-              } else if (param.contains("/books/")) {
+                        builder: (context) => HousePage(
+                              title: "House",
+                              web: param,
+                            )));
               } else if (param.contains("/houses/")) {}
             },
-            child: const Text('Link'));
+            child: Text(param));
       } else {
         return Text(param);
       }
@@ -212,9 +224,32 @@ class _CharacterPageState extends State<CharacterPage> {
         hint: const Text('See'),
         items: param.map((String param) {
           return DropdownMenuItem<String>(
-            value: param,
-            child: SelectableText(param),
-          );
+              value: param,
+              child: TextButton(
+                  onPressed: () {
+                    if (param.contains("/characters/")) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CharacterPage(
+                            title: "Character",
+                            web: param,
+                          ),
+                        ),
+                      );
+                    }
+                    if (param.contains("/houses/")) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HousePage(
+                                    title: "House",
+                                    web: param,
+                                  )));
+                    }
+                    if (param.contains("/books/")) {}
+                  },
+                  child: Text(param)));
         }).toList(),
         onChanged: (String? newValue) {
           setState(() {});
