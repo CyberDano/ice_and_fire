@@ -302,7 +302,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   title: Text(
                     (param[index]),
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14),
+                    style: const TextStyle(fontSize: 14),
                   ),
                 );
               }),
