@@ -27,6 +27,7 @@ class _CharactersListScreenState extends State<CharactersList> {
   }
 
   void loadCharacters() async {
+    if (littleList.isNotEmpty) littleList.removeRange(0, littleList.length);
     try {
       for (int i = initialIndex; i < finalIndex; i++) {
         final url = Uri.parse("$web$i");

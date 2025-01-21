@@ -223,7 +223,7 @@ class _BookPageState extends State<BookPage> {
       }
       return DropdownButton<String>(
         hint: Text('See ${param.length}'),
-        items: param.map((String param) {
+        items: param.take(itemsToShow).map((String param) {
           return DropdownMenuItem<String>(
               value: param,
               child: TextButton(
