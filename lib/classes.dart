@@ -123,7 +123,7 @@ class Book {
   final String name;
   final String isbn;
   final List<String> authors;
-  final String pages;
+  final int pages;
   final String publisher;
   final String country;
   final String mediaType;
@@ -154,7 +154,7 @@ class Book {
         pages: json['numberOfPages'],
         publisher: json['publisher'],
         country: json['country'],
-        mediaType: json['madiaType'],
+        mediaType: json['mediaType'],
         released: json['released'],
         characters: List<String>.from(json['characters']),
         povCharacters: List<String>.from(json['povCharacters']));

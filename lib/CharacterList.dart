@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:ice_and_fire/classes.dart';
+import 'package:ice_and_fire/characterpage.dart';
 
 class CharactersList extends StatefulWidget {
   const CharactersList({super.key, required this.title});
@@ -14,47 +15,32 @@ class CharactersList extends StatefulWidget {
 
 /* Screen build */
 class _CharactersListScreenState extends State<CharactersList> {
-  late List<Character> characterList = <Character>[];
+  List<Character> littleList = [];
   String web = "https://anapioficeandfire.com/api/characters/";
-  Character novel = const Character(
-      url: "",
-      name: "",
-      gender: "",
-      culture: "",
-      born: "Loading...",
-      died: "Loading...",
-      titles: ["Loading..."],
-      aliases: ["Loading..."],
-      father: "Loading...",
-      mother: "Loading...",
-      spouse: "Loading...",
-      allegiances: ["Loading..."],
-      books: ["Loading..."],
-      povBooks: ["Loading..."],
-      tvSeries: ["Loading..."],
-      playedBy: ["Loading..."]);
+  int initialIndex = 1;
+  int finalIndex = 11;
+
   @override
   void initState() {
-    LoadCharacter();
     super.initState();
+    loadCharacters();
   }
 
-  // ignore: non_constant_identifier_names
-  void LoadCharacter() async {
-    for (int i = 1; i < 2135; i++) {
-      try {
-        final url = Uri.parse("$web" "$i");
+  void loadCharacters() async {
+    try {
+      for (int i = initialIndex; i < finalIndex; i++) {
+        final url = Uri.parse("$web$i");
         final response = await http.get(url);
         if (response.statusCode == 200) {
           final json = response.body;
-          // ignore: non_constant_identifier_names
-          novel = Character.fromJson(jsonDecode(json));
-          characterList.add(novel);
+          final Character novel = Character.fromJson(jsonDecode(json));
+          setState(() {
+            littleList.add(novel);
+          });
         }
-      } catch (e) {
-        print("Error loading $e");
       }
-      setState(() {}); // Actualiza la Interfaz de Usuario
+    } catch (e) {
+      print("Error loading characters from $web");
     }
   }
 
@@ -69,16 +55,31 @@ class _CharactersListScreenState extends State<CharactersList> {
         child: Column(
           children: [
             const Text(
-              "\nLisf of characters:",
+              "\nList of characters:",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
+            Text("(from $initialIndex to ${finalIndex - 1}):"),
             Container(
               padding: const EdgeInsets.all(20.0),
               child: SizedBox(
-                width: 300,
-                height: 50,
+                width: 650,
+                height: 500,
                 child: _myListView(context),
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: prevPage,
+                  child: const Text("< Previous page"),
+                ),
+                const Text("|"),
+                TextButton(
+                  onPressed: nextPage,
+                  child: const Text("Next page >"),
+                ),
+              ],
             ),
           ],
         ),
@@ -87,14 +88,45 @@ class _CharactersListScreenState extends State<CharactersList> {
   }
 
   Widget _myListView(BuildContext context) {
-    print("Pasan cosas");
     return ListView.builder(
-      itemCount: characterList.length,
+      itemCount: littleList.length,
       itemBuilder: (context, index) {
+        final character = littleList[index];
         return ListTile(
-          title: Text(characterList[index].name),
+          title: TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CharacterPage(
+                    title: "Character ${character.url}",
+                    web: character.url,
+                  ),
+                ),
+              );
+            },
+            child: Text("Character -> ${character.name}"),
+          ),
         );
       },
     );
+  }
+
+  /// Modifica el listado disminuyendo los índices
+  void prevPage() {
+    if ((initialIndex - 10) > 0) {
+      initialIndex -= 10;
+      finalIndex -= 10;
+      loadCharacters();
+    }
+  }
+
+  /// Modifica el listado aumentando los índices
+  void nextPage() {
+    if (finalIndex + 10 < 2135) {
+      initialIndex += 10;
+      finalIndex += 10;
+      loadCharacters();
+    }
   }
 }

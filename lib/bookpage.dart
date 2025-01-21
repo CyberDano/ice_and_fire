@@ -21,7 +21,7 @@ class _BookPageState extends State<BookPage> {
       name: "",
       isbn: "",
       authors: ["Loading..."],
-      pages: "Loading...",
+      pages: 0,
       publisher: "Loading...",
       country: "Loading...",
       mediaType: "Loading...",
@@ -30,6 +30,7 @@ class _BookPageState extends State<BookPage> {
       povCharacters: ["Loading..."]);
   String notedText = "";
   String request = "";
+  int itemsToShow = 10;
 
   @override
   void initState() {
@@ -41,7 +42,7 @@ class _BookPageState extends State<BookPage> {
   void RandomCharacter() async {
     try {
       final url = Uri.parse(widget.web);
-      request = url.toString();
+      request = widget.web;
       final response = await http.get(url);
       if (response.statusCode == 200) {
         final json = response.body;
@@ -65,14 +66,23 @@ class _BookPageState extends State<BookPage> {
       body: Center(
           child: Column(children: [
         const Text(
-          "\nCharacter:",
+          "\nBook:",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        Text(notedText),
+        SelectableText(notedText),
         Column(
           children: [
             const Text("ISBN:"),
             Answer(noted.isbn),
+            Text("\nNow loading $itemsToShow parameters."),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  itemsToShow += 10;
+                });
+              },
+              child: const Text('Load 10 more'),
+            ),
           ],
         ),
         Container(
@@ -90,7 +100,7 @@ class _BookPageState extends State<BookPage> {
                   Column(
                     children: [
                       const Text("Number of pages:"),
-                      Answer(noted.pages),
+                      Answer("${noted.pages} pages"),
                     ],
                   ),
                 ]),
@@ -111,7 +121,7 @@ class _BookPageState extends State<BookPage> {
                 TableRow(children: [
                   Column(
                     children: [
-                      const Text("mediaType:"),
+                      const Text("Media type:"),
                       Answer(noted.mediaType),
                     ],
                   ),
@@ -125,13 +135,13 @@ class _BookPageState extends State<BookPage> {
                 TableRow(children: [
                   Column(
                     children: [
-                      const Text("characters:"),
+                      const Text("Characters:"),
                       ListAnswer(noted.characters),
                     ],
                   ),
                   Column(
                     children: [
-                      const Text("povCharacters:"),
+                      const Text("POV characters:"),
                       ListAnswer(noted.povCharacters),
                     ],
                   ),
@@ -157,20 +167,30 @@ class _BookPageState extends State<BookPage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CharacterPage(
-                      title: "Character",
+                      title: "Character $param",
                       web: param,
                     ),
                   ),
                 );
-              } else if (param.contains("/books/")) {
+              }
+              if (param.contains("/houses/")) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => HousePage(
-                              title: "House",
+                              title: "House $param",
                               web: param,
                             )));
-              } else if (param.contains("/houses/")) {}
+              }
+              if (param.contains("/books/")) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BookPage(
+                              title: "Book $param",
+                              web: param,
+                            )));
+              }
             },
             child: Text(param));
       } else {
@@ -184,8 +204,25 @@ class _BookPageState extends State<BookPage> {
   // ignore: non_constant_identifier_names
   Widget ListAnswer(List<String> param) {
     if (param.isNotEmpty) {
+      if (!param[0].startsWith("http")) {
+        return SizedBox(
+          width: 300,
+          height: 50,
+          child: ListView.builder(
+              itemCount: param.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    (param[index]),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                );
+              }),
+        );
+      }
       return DropdownButton<String>(
-        hint: const Text('See'),
+        hint: Text('See ${param.length}'),
         items: param.map((String param) {
           return DropdownMenuItem<String>(
               value: param,
@@ -196,7 +233,7 @@ class _BookPageState extends State<BookPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => CharacterPage(
-                            title: "Character",
+                            title: "Character $param",
                             web: param,
                           ),
                         ),
@@ -207,11 +244,19 @@ class _BookPageState extends State<BookPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => HousePage(
-                                    title: "House",
+                                    title: "House $param",
                                     web: param,
                                   )));
                     }
-                    if (param.contains("/books/")) {}
+                    if (param.contains("/books/")) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BookPage(
+                                    title: "Book $param",
+                                    web: param,
+                                  )));
+                    }
                   },
                   child: Text(param)));
         }).toList(),

@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:ice_and_fire/bookpage.dart';
-import 'package:ice_and_fire/characterpage.dart';
 import 'dart:math';
 
 import 'package:ice_and_fire/classes.dart';
 import 'package:ice_and_fire/CharacterList.dart';
 import 'package:ice_and_fire/Favourites.dart';
 import 'package:ice_and_fire/housepage.dart';
+import 'package:ice_and_fire/bookpage.dart';
+import 'package:ice_and_fire/characterpage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -75,7 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
       if (response.statusCode == 200) {
         final json = response.body;
         noted = Character.fromJson(jsonDecode(json));
-        notedText = noted.name;
+        if (noted.name.isNotEmpty) {
+          notedText = noted.name;
+        } else {
+          notedText = "[···]";
+        }
         notedText += ", who is a ${noted.gender.toLowerCase()} character.";
         request = json;
       }
@@ -250,22 +254,30 @@ class _MyHomePageState extends State<MyHomePage> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CharacterPage(
-                      title: "Character",
+                      title: "Character $param",
                       web: param,
                     ),
                   ),
                 );
               }
-              if (param.contains("/books/")) {
+              if (param.contains("/houses/")) {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
                         builder: (context) => HousePage(
-                              title: "House",
+                              title: "House $param",
                               web: param,
                             )));
               }
-              if (param.contains("/houses/")) {}
+              if (param.contains("/books/")) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BookPage(
+                              title: "Book $param",
+                              web: param,
+                            )));
+              }
             },
             child: Text(param));
       } else {
@@ -279,8 +291,25 @@ class _MyHomePageState extends State<MyHomePage> {
   // ignore: non_constant_identifier_names
   Widget ListAnswer(List<String> param) {
     if (param.isNotEmpty) {
+      if (!param[0].startsWith("http")) {
+        return SizedBox(
+          width: 300,
+          height: 50,
+          child: ListView.builder(
+              itemCount: param.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    (param[index]),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14),
+                  ),
+                );
+              }),
+        );
+      }
       return DropdownButton<String>(
-        hint: const Text('See'),
+        hint: Text('See ${param.length}'),
         items: param.map((String param) {
           return DropdownMenuItem<String>(
               value: param,
@@ -291,7 +320,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => CharacterPage(
-                            title: "Character",
+                            title: "Character $param",
                             web: param,
                           ),
                         ),
@@ -302,7 +331,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => HousePage(
-                                    title: "House",
+                                    title: "House $param",
                                     web: param,
                                   )));
                     }
@@ -311,7 +340,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => BookPage(
-                                    title: "Book",
+                                    title: "Book $param",
                                     web: param,
                                   )));
                     }
