@@ -64,131 +64,139 @@ class _HousePageState extends State<HousePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child: Column(children: [
-        const Text(
-          "\nHouse:",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
-        Text(notedText),
-        Text("\nNow loading $itemsToShow parameters."),
-        TextButton(
-          onPressed: () {
-            setState(() {
-              itemsToShow += 10;
-            });
-          },
-          child: const Text('Load 10 more'),
-        ),
-        Container(
-          padding: const EdgeInsets.all(20.0),
-          child: SizedBox(
-            child: Table(
-              children: [
-                TableRow(children: [
-                  Column(children: [
-                    const Text("Region:"),
-                    Answer(noted.region),
+        body: Center(
+            child: Column(children: [
+          const Text(
+            "\nHouse:",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          Text(notedText),
+          Text("\nNow loading $itemsToShow parameters."),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                itemsToShow += 10;
+              });
+            },
+            child: const Text('Load 10 more'),
+          ),
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            child: SizedBox(
+              child: Table(
+                children: [
+                  TableRow(children: [
+                    Column(children: [
+                      const Text("Region:"),
+                      Answer(noted.region),
+                    ]),
+                    Column(children: [
+                      const Text("Coat of arms:"),
+                      Answer(noted.coatOfArms),
+                    ]),
                   ]),
-                  Column(children: [
-                    const Text("Coat of arms:"),
-                    Answer(noted.coatOfArms),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Words:"),
+                        Answer(noted.words),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Titles:"),
+                        ListAnswer(noted.titles),
+                      ],
+                    ),
                   ]),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Words:"),
-                      Answer(noted.words),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Titles:"),
-                      ListAnswer(noted.titles),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Seats:"),
-                      ListAnswer(noted.seats),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Current lord:"),
-                      Answer(noted.currentLord),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Heir:"),
-                      Answer(noted.heir),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Overlord:"),
-                      Answer(noted.overlord),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Founded:"),
-                      Answer(noted.founded),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Founder:"),
-                      Answer(noted.founder),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Died out:"),
-                      Answer(noted.diedOut),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Ancestral weapons:"),
-                      ListAnswer(noted.ancestralWeapons),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Cadet branches:"),
-                      ListAnswer(noted.cadetBranches),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Sworn members:"),
-                      ListAnswer(noted.swornMembers),
-                    ],
-                  ),
-                ]),
-              ],
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Seats:"),
+                        ListAnswer(noted.seats),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Current lord:"),
+                        Answer(noted.currentLord),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Heir:"),
+                        Answer(noted.heir),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Overlord:"),
+                        Answer(noted.overlord),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Founded:"),
+                        Answer(noted.founded),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Founder:"),
+                        Answer(noted.founder),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Died out:"),
+                        Answer(noted.diedOut),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Ancestral weapons:"),
+                        ListAnswer(noted.ancestralWeapons),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Cadet branches:"),
+                        ListAnswer(noted.cadetBranches),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Sworn members:"),
+                        ListAnswer(noted.swornMembers),
+                      ],
+                    ),
+                  ]),
+                ],
+              ),
             ),
           ),
-        ),
-      ])),
-    );
+        ])),
+        floatingActionButton: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: GoHome,
+        ));
+  }
+
+// ignore: non_constant_identifier_names
+  void GoHome() {
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   /// Devuelve los datos correspondientes si están rellenos

@@ -56,9 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
       books: ["Loading..."],
       povBooks: ["Loading..."],
       tvSeries: ["Loading..."],
-      playedBy: ["Loading..."]);
+      playedBy: ["Loading..."],
+      fav: false);
   String notedText = "";
   String request = "";
+  bool isFavourite = false;
 
   @override
   void initState() {
@@ -103,19 +105,8 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         Text(notedText),
-        if (noted.playedBy.isNotEmpty)
-          DropdownButton<String>(
-            hint: const Text('PlayedBy'),
-            items: noted.playedBy.map((String param) {
-              return DropdownMenuItem<String>(
-                value: param,
-                child: Text(param),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {});
-            },
-          ),
+        if (noted.playedBy.isNotEmpty) const Text("Played by:"),
+        if (noted.playedBy.isNotEmpty) ListAnswer(noted.playedBy),
         Container(
           padding: const EdgeInsets.all(20.0),
           child: SizedBox(
@@ -205,6 +196,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
+        Switch(
+          value: isFavourite,
+          onChanged: (value) => _toggleFavourite(),
+        ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -220,6 +215,17 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ])),
     );
+  }
+
+  void _toggleFavourite() {
+    setState(() {
+      isFavourite = !isFavourite;
+      if (isFavourite) {
+        FavouriteCharacters().addFav(noted);
+      } else {
+        FavouriteCharacters().removeFav(noted);
+      }
+    });
   }
 
   /// All characters list

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:ice_and_fire/Favourites.dart';
 import 'package:ice_and_fire/bookpage.dart';
 
 import 'package:ice_and_fire/classes.dart';
@@ -32,9 +33,11 @@ class _CharacterPageState extends State<CharacterPage> {
       books: ["Loading..."],
       povBooks: ["Loading..."],
       tvSeries: ["Loading..."],
-      playedBy: ["Loading..."]);
+      playedBy: ["Loading..."],
+      fav: false);
   String notedText = "";
   String request = "";
+  bool isFavourite = false;
 
   @override
   void initState() {
@@ -68,121 +71,133 @@ class _CharacterPageState extends State<CharacterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child: Column(children: [
-        const Text(
-          "\nCharacter:",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
-        Text(notedText),
-        if (noted.playedBy.isNotEmpty)
-          DropdownButton<String>(
-            hint: const Text('PlayedBy'),
-            items: noted.playedBy.map((String param) {
-              return DropdownMenuItem<String>(
-                value: param,
-                child: Text(param),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {});
-            },
+        body: Center(
+            child: Column(children: [
+          const Text(
+            "\nCharacter:",
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-        Container(
-          padding: const EdgeInsets.all(20.0),
-          child: SizedBox(
-            child: Table(
-              children: [
-                TableRow(children: [
-                  Column(children: [
-                    const Text("Culture:"),
-                    Answer(noted.culture),
+          Text(notedText),
+          if (noted.playedBy.isNotEmpty) const Text("Played by:"),
+          if (noted.playedBy.isNotEmpty) ListAnswer(noted.playedBy),
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            child: SizedBox(
+              child: Table(
+                children: [
+                  TableRow(children: [
+                    Column(children: [
+                      const Text("Culture:"),
+                      Answer(noted.culture),
+                    ]),
+                    Column(children: [
+                      const Text("Spouse:"),
+                      Answer(noted.spouse),
+                    ]),
                   ]),
-                  Column(children: [
-                    const Text("Spouse:"),
-                    Answer(noted.spouse),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Born:"),
+                        Answer(noted.born),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Died:"),
+                        Answer(noted.died),
+                      ],
+                    ),
                   ]),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Born:"),
-                      Answer(noted.born),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Died:"),
-                      Answer(noted.died),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Titles:"),
-                      ListAnswer(noted.titles),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Aliases:"),
-                      ListAnswer(noted.aliases),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Father:"),
-                      Answer(noted.father),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Mother:"),
-                      Answer(noted.mother),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Allegiances:"),
-                      ListAnswer(noted.allegiances),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Books:"),
-                      ListAnswer(noted.books),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("povBooks:"),
-                      ListAnswer(noted.povBooks),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("tvSeries:"),
-                      ListAnswer(noted.tvSeries),
-                    ],
-                  ),
-                ]),
-              ],
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Titles:"),
+                        ListAnswer(noted.titles),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Aliases:"),
+                        ListAnswer(noted.aliases),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Father:"),
+                        Answer(noted.father),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Mother:"),
+                        Answer(noted.mother),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Allegiances:"),
+                        ListAnswer(noted.allegiances),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Books:"),
+                        ListAnswer(noted.books),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("povBooks:"),
+                        ListAnswer(noted.povBooks),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("tvSeries:"),
+                        ListAnswer(noted.tvSeries),
+                      ],
+                    ),
+                  ]),
+                ],
+              ),
             ),
           ),
-        ),
-      ])),
-    );
+          Switch(
+            value: isFavourite,
+            onChanged: (value) => _toggleFavourite(),
+          ),
+        ])),
+        floatingActionButton: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: GoHome,
+        ));
+  }
+
+  void _toggleFavourite() {
+    setState(() {
+      isFavourite = !isFavourite;
+      if (isFavourite) {
+        FavouriteCharacters().addFav(noted);
+      } else {
+        FavouriteCharacters().removeFav(noted);
+      }
+    });
+  }
+
+// ignore: non_constant_identifier_names
+  void GoHome() {
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   /// Devuelve los datos correspondientes si están rellenos

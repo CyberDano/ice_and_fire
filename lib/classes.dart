@@ -16,6 +16,7 @@ class Character {
   final List<String> povBooks;
   final List<String> tvSeries;
   final List<String> playedBy;
+  final bool fav;
 
   const Character({
     required this.url,
@@ -34,6 +35,7 @@ class Character {
     required this.povBooks,
     required this.tvSeries,
     required this.playedBy,
+    required this.fav
   });
 
 // Método para crear una instancia de Character a partir de JSON
@@ -54,7 +56,8 @@ class Character {
         books: List<String>.from(json['books']),
         povBooks: List<String>.from(json['povBooks']),
         tvSeries: List<String>.from(json['tvSeries']),
-        playedBy: List<String>.from(json['playedBy']));
+        playedBy: List<String>.from(json['playedBy']),
+        fav: false);
   }
 }
 

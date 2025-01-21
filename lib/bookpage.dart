@@ -59,99 +59,107 @@ class _BookPageState extends State<BookPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child: Column(children: [
-        const Text(
-          "\nBook:",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
-        SelectableText(notedText),
-        Column(
-          children: [
-            const Text("ISBN:"),
-            Answer(noted.isbn),
-            Text("\nNow loading $itemsToShow parameters."),
-            TextButton(
-              onPressed: () {
-                setState(() {
-                  itemsToShow += 10;
-                });
-              },
-              child: const Text('Load 10 more'),
-            ),
-          ],
-        ),
-        Container(
-          padding: const EdgeInsets.all(20.0),
-          child: SizedBox(
-            child: Table(
-              children: [
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Authors:"),
-                      ListAnswer(noted.authors),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Number of pages:"),
-                      Answer("${noted.pages} pages"),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Publisher:"),
-                      Answer(noted.publisher),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Country:"),
-                      Answer(noted.country),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Media type:"),
-                      Answer(noted.mediaType),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Released:"),
-                      Answer(noted.released),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Characters:"),
-                      ListAnswer(noted.characters),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("POV characters:"),
-                      ListAnswer(noted.povCharacters),
-                    ],
-                  ),
-                ]),
-              ],
+        body: Center(
+            child: Column(children: [
+          const Text(
+            "\nBook:",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          SelectableText(notedText),
+          Column(
+            children: [
+              const Text("ISBN:"),
+              Answer(noted.isbn),
+              Text("\nNow loading $itemsToShow parameters."),
+              TextButton(
+                onPressed: () {
+                  setState(() {
+                    itemsToShow += 10;
+                  });
+                },
+                child: const Text('Load 10 more'),
+              ),
+            ],
+          ),
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            child: SizedBox(
+              child: Table(
+                children: [
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Authors:"),
+                        ListAnswer(noted.authors),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Number of pages:"),
+                        Answer("${noted.pages} pages"),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Publisher:"),
+                        Answer(noted.publisher),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Country:"),
+                        Answer(noted.country),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Media type:"),
+                        Answer(noted.mediaType),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("Released:"),
+                        Answer(noted.released),
+                      ],
+                    ),
+                  ]),
+                  TableRow(children: [
+                    Column(
+                      children: [
+                        const Text("Characters:"),
+                        ListAnswer(noted.characters),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        const Text("POV characters:"),
+                        ListAnswer(noted.povCharacters),
+                      ],
+                    ),
+                  ]),
+                ],
+              ),
             ),
           ),
-        ),
-      ])),
-    );
+        ])),
+        floatingActionButton: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: GoHome,
+        ));
+  }
+
+  // ignore: non_constant_identifier_names
+  void GoHome() {
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   /// Devuelve los datos correspondientes si están rellenos

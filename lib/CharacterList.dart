@@ -13,7 +13,6 @@ class CharactersList extends StatefulWidget {
   State<CharactersList> createState() => _CharactersListScreenState();
 }
 
-/* Screen build */
 class _CharactersListScreenState extends State<CharactersList> {
   List<Character> littleList = [];
   String web = "https://anapioficeandfire.com/api/characters/";
@@ -24,6 +23,44 @@ class _CharactersListScreenState extends State<CharactersList> {
   void initState() {
     super.initState();
     loadCharacters();
+  }
+
+/// Modifica el listado disminuyendo los índices
+  // ignore: non_constant_identifier_names
+  void PrevPage(bool fast) {
+    if (!fast) {
+      if ((initialIndex - 10) > 0) {
+        initialIndex -= 10;
+        finalIndex -= 10;
+        loadCharacters();
+      }
+    }
+    if (fast) {
+      if ((initialIndex - 20) > 0) {
+        initialIndex -= 20;
+        finalIndex -= 20;
+        loadCharacters();
+      }
+    }
+  }
+
+  /// Modifica el listado aumentando los índices
+  // ignore: non_constant_identifier_names
+  void NextPage(bool fast) {
+    if (!fast) {
+      if (finalIndex + 10 < 2135) {
+        initialIndex += 10;
+        finalIndex += 10;
+        loadCharacters();
+      }
+    }
+    if (fast) {
+      if (finalIndex + 20 < 2135) {
+        initialIndex += 20;
+        finalIndex += 20;
+        loadCharacters();
+      }
+    }
   }
 
   void loadCharacters() async {
@@ -72,13 +109,21 @@ class _CharactersListScreenState extends State<CharactersList> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: prevPage,
+                  onPressed: () => PrevPage(true),
+                  child: const Text("<< Previous page"),
+                ),
+                TextButton(
+                  onPressed: () => PrevPage(false),
                   child: const Text("< Previous page"),
                 ),
                 const Text("|"),
                 TextButton(
-                  onPressed: nextPage,
+                  onPressed: () => NextPage(false),
                   child: const Text("Next page >"),
+                ),
+                TextButton(
+                  onPressed: () => NextPage(true),
+                  child: const Text("Next page >>"),
                 ),
               ],
             ),
@@ -111,23 +156,5 @@ class _CharactersListScreenState extends State<CharactersList> {
         );
       },
     );
-  }
-
-  /// Modifica el listado disminuyendo los índices
-  void prevPage() {
-    if ((initialIndex - 10) > 0) {
-      initialIndex -= 10;
-      finalIndex -= 10;
-      loadCharacters();
-    }
-  }
-
-  /// Modifica el listado aumentando los índices
-  void nextPage() {
-    if (finalIndex + 10 < 2135) {
-      initialIndex += 10;
-      finalIndex += 10;
-      loadCharacters();
-    }
   }
 }
