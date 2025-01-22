@@ -1,13 +1,12 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-
 import 'package:flutter/material.dart';
 import 'package:ice_and_fire/characterpage.dart';
 import 'package:ice_and_fire/classes.dart';
+import 'package:provider/provider.dart';
 
 class FavouriteCharacters with ChangeNotifier {
   List<Character> favList = [];
 
+  /// Adds character to list
   void addFav(Character c) {
     if (!favList.contains(c)) {
       favList.add(c);
@@ -15,11 +14,13 @@ class FavouriteCharacters with ChangeNotifier {
     }
   }
 
+  /// ERemoves character from list
   void removeFav(Character c) {
     favList.remove(c);
     notifyListeners();
   }
 
+  /// Checks if the character is in list
   bool isFavourite(Character c) {
     return favList.contains(c);
   }
@@ -39,8 +40,7 @@ class _FavouriteScreenState extends State<Favourites> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title:
-            const Text("Lista de personajes favoritos"), // Actualiza el título
+        title: const Text("Lista de personajes favoritos"),
       ),
       body: Center(
         child: Column(
@@ -57,7 +57,6 @@ class _FavouriteScreenState extends State<Favourites> {
                 child: _myListView(context),
               ),
             ),
-            // ... (pagination buttons, puedes eliminarlos si no son necesarios)
           ],
         ),
       ),
@@ -65,27 +64,29 @@ class _FavouriteScreenState extends State<Favourites> {
   }
 
   Widget _myListView(BuildContext context) {
-    return ListView.builder(
-      itemCount: FavouriteCharacters()
-          .favList
-          .length, // Usa el tamaño de la lista de favoritos
-      itemBuilder: (context, index) {
-        final character = FavouriteCharacters().favList[index];
-        return ListTile(
-          title: TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CharacterPage(
-                    title: "Character ${character.url}",
-                    web: character.url,
-                  ),
-                ),
-              );
-            },
-            child: Text("Character -> ${character.name}"),
-          ),
+    return Consumer<FavouriteCharacters>(
+      builder: (context, favCharacters, child) {
+        return ListView.builder(
+          itemCount: favCharacters.favList.length,
+          itemBuilder: (context, index) {
+            final character = favCharacters.favList[index];
+            return ListTile(
+              title: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CharacterPage(
+                        title: "Character ${character.url}",
+                        web: character.url,
+                      ),
+                    ),
+                  );
+                },
+                child: Text("Character -> ${character.name}"),
+              ),
+            );
+          },
         );
       },
     );

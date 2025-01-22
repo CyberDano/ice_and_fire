@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:math';
 
@@ -11,7 +12,10 @@ import 'package:ice_and_fire/bookpage.dart';
 import 'package:ice_and_fire/characterpage.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => FavouriteCharacters(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -56,16 +60,18 @@ class _MyHomePageState extends State<MyHomePage> {
       books: ["Loading..."],
       povBooks: ["Loading..."],
       tvSeries: ["Loading..."],
-      playedBy: ["Loading..."],
-      fav: false);
+      playedBy: ["Loading..."]);
   String notedText = "";
   String request = "";
   bool isFavourite = false;
 
   @override
   void initState() {
-    RandomCharacter();
     super.initState();
+    final favCharacters =
+        Provider.of<FavouriteCharacters>(context, listen: false);
+    isFavourite = favCharacters.isFavourite(noted);
+    RandomCharacter();
   }
 
   // ignore: non_constant_identifier_names
@@ -196,9 +202,15 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ),
-        Switch(
-          value: isFavourite,
-          onChanged: (value) => _toggleFavourite(),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("Favourite"),
+            Switch(
+              value: isFavourite,
+              onChanged: (value) => _toggleFavourite(),
+            ),
+          ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -220,10 +232,13 @@ class _MyHomePageState extends State<MyHomePage> {
   void _toggleFavourite() {
     setState(() {
       isFavourite = !isFavourite;
+      final favCharacters =
+          Provider.of<FavouriteCharacters>(context, listen: false);
+
       if (isFavourite) {
-        FavouriteCharacters().addFav(noted);
-      } else {
-        FavouriteCharacters().removeFav(noted);
+        favCharacters.addFav(noted);
+      } else if (!isFavourite && favCharacters.isFavourite(noted)) {
+        favCharacters.removeFav(noted);
       }
     });
   }

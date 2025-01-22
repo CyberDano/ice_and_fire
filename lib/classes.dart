@@ -16,48 +16,67 @@ class Character {
   final List<String> povBooks;
   final List<String> tvSeries;
   final List<String> playedBy;
-  final bool fav;
 
-  const Character({
-    required this.url,
-    required this.name,
-    required this.gender,
-    required this.culture,
-    required this.born,
-    required this.died,
-    required this.titles,
-    required this.aliases,
-    required this.father,
-    required this.mother,
-    required this.spouse,
-    required this.allegiances,
-    required this.books,
-    required this.povBooks,
-    required this.tvSeries,
-    required this.playedBy,
-    required this.fav
-  });
+  const Character(
+      {required this.url,
+      required this.name,
+      required this.gender,
+      required this.culture,
+      required this.born,
+      required this.died,
+      required this.titles,
+      required this.aliases,
+      required this.father,
+      required this.mother,
+      required this.spouse,
+      required this.allegiances,
+      required this.books,
+      required this.povBooks,
+      required this.tvSeries,
+      required this.playedBy});
 
 // Método para crear una instancia de Character a partir de JSON
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
-        url: json['url'],
-        name: json['name'],
-        gender: json['gender'],
-        culture: json['culture'],
-        born: json['born'],
-        died: json['died'],
-        titles: List<String>.from(json['titles']),
-        aliases: List<String>.from(json['aliases']),
-        father: json['father'],
-        mother: json['mother'],
-        spouse: json['spouse'],
-        allegiances: List<String>.from(json['allegiances']),
-        books: List<String>.from(json['books']),
-        povBooks: List<String>.from(json['povBooks']),
-        tvSeries: List<String>.from(json['tvSeries']),
-        playedBy: List<String>.from(json['playedBy']),
-        fav: false);
+      url: json['url'],
+      name: json['name'],
+      gender: json['gender'],
+      culture: json['culture'],
+      born: json['born'],
+      died: json['died'],
+      titles: List<String>.from(json['titles']),
+      aliases: List<String>.from(json['aliases']),
+      father: json['father'],
+      mother: json['mother'],
+      spouse: json['spouse'],
+      allegiances: List<String>.from(json['allegiances']),
+      books: List<String>.from(json['books']),
+      povBooks: List<String>.from(json['povBooks']),
+      tvSeries: List<String>.from(json['tvSeries']),
+      playedBy: List<String>.from(json['playedBy']),
+    );
+  }
+
+  // Método para convertir una instancia de Character a JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'name': name,
+      'gender': gender,
+      'culture': culture,
+      'born': born,
+      'died': died,
+      'titles': titles,
+      'aliases': aliases,
+      'father': father,
+      'mother': mother,
+      'spouse': spouse,
+      'allegiances': allegiances,
+      'books': books,
+      'povBooks': povBooks,
+      'tvSeries': tvSeries,
+      'playedBy': playedBy,
+    };
   }
 }
 

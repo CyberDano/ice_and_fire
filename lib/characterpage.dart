@@ -6,6 +6,7 @@ import 'package:ice_and_fire/bookpage.dart';
 
 import 'package:ice_and_fire/classes.dart';
 import 'package:ice_and_fire/housepage.dart';
+import 'package:provider/provider.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key, required this.title, required this.web});
@@ -33,20 +34,19 @@ class _CharacterPageState extends State<CharacterPage> {
       books: ["Loading..."],
       povBooks: ["Loading..."],
       tvSeries: ["Loading..."],
-      playedBy: ["Loading..."],
-      fav: false);
+      playedBy: ["Loading..."]);
   String notedText = "";
   String request = "";
   bool isFavourite = false;
 
   @override
   void initState() {
-    RandomCharacter();
+    LoadCharacter();
     super.initState();
   }
 
   // ignore: non_constant_identifier_names
-  void RandomCharacter() async {
+  void LoadCharacter() async {
     try {
       final url = Uri.parse(widget.web);
       request = url.toString();
@@ -61,11 +61,16 @@ class _CharacterPageState extends State<CharacterPage> {
         }
         notedText += ", who is a ${noted.gender.toLowerCase()} character.";
         request = json;
+
+        // Verificar si el personaje es favorito
+        final favCharacters =
+            Provider.of<FavouriteCharacters>(context, listen: false);
+        isFavourite = favCharacters.isFavourite(noted);
       }
     } catch (e) {
       notedText = "Error loading character.\n Request: $request";
     }
-    setState(() {}); // Actualiza la Interfaz de Usuario
+    setState(() {});
   }
 
   @override
@@ -173,9 +178,15 @@ class _CharacterPageState extends State<CharacterPage> {
               ),
             ),
           ),
-          Switch(
-            value: isFavourite,
-            onChanged: (value) => _toggleFavourite(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Favourite"),
+              Switch(
+                value: isFavourite,
+                onChanged: (value) => _toggleFavourite(),
+              ),
+            ],
           ),
         ])),
         floatingActionButton: IconButton(
@@ -187,12 +198,20 @@ class _CharacterPageState extends State<CharacterPage> {
   void _toggleFavourite() {
     setState(() {
       isFavourite = !isFavourite;
+      final favCharacters =
+          Provider.of<FavouriteCharacters>(context, listen: false);
+
       if (isFavourite) {
-        FavouriteCharacters().addFav(noted);
-      } else {
-        FavouriteCharacters().removeFav(noted);
+        print("Favorito. Se debe añadir.");
+        favCharacters.addFav(noted);
+      } else if (!isFavourite && favCharacters.isFavourite(noted)) {
+        print("No favorito. Se elimina si está.");
+        favCharacters.removeFav(noted);
       }
     });
+    final favCharacters =
+        Provider.of<FavouriteCharacters>(context, listen: false);
+    print(favCharacters.favList.length);
   }
 
 // ignore: non_constant_identifier_names

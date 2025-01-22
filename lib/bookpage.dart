@@ -34,12 +34,12 @@ class _BookPageState extends State<BookPage> {
 
   @override
   void initState() {
-    RandomCharacter();
+    LoadBook();
     super.initState();
   }
 
   // ignore: non_constant_identifier_names
-  void RandomCharacter() async {
+  void LoadBook() async {
     try {
       final url = Uri.parse(widget.web);
       request = widget.web;

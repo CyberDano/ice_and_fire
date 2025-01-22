@@ -39,12 +39,12 @@ class _HousePageState extends State<HousePage> {
 
   @override
   void initState() {
-    RandomCharacter();
+    LoadHouse();
     super.initState();
   }
 
   // ignore: non_constant_identifier_names
-  void RandomCharacter() async {
+  void LoadHouse() async {
     try {
       final url = Uri.parse(widget.web);
       request = url.toString();
