@@ -1,3 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:ice_and_fire/bookpage.dart';
+import 'package:ice_and_fire/characterpage.dart';
+import 'package:ice_and_fire/housepage.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 /// Clase para los personajes
 class Character {
   final String url;
@@ -180,5 +188,137 @@ class Book {
         released: json['released'],
         characters: List<String>.from(json['characters']),
         povCharacters: List<String>.from(json['povCharacters']));
+  }
+}
+
+class Methods {
+  static int itemCountToShow(List<String> param, int itemsToShow) {
+    if (param.length < itemsToShow) {
+      print(param.length);
+      return param.length;
+    }
+    print(itemsToShow);
+    return itemsToShow;
+  }
+
+  /// Devuelve los datos correspondientes si están rellenos
+  // ignore: non_constant_identifier_names
+  static Widget answer(BuildContext context, String param) {
+    if (param.isNotEmpty) {
+      if (param.startsWith("http")) {
+        // Si es un enlace
+        return TextButton(
+            onPressed: () {
+              if (param.contains("/characters/")) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CharacterPage(
+                      title: "Character${param.substring(45)}",
+                      web: param,
+                    ),
+                  ),
+                );
+              }
+              if (param.contains("/houses/")) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HousePage(
+                              title: "House${param.substring(40)}",
+                              web: param,
+                            )));
+              }
+              if (param.contains("/books/")) {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BookPage(
+                              title: "Book${param.substring(34)}",
+                              web: param,
+                            )));
+              }
+            },
+            child: Text("See -> ${param.substring(34)}"));
+      } else {
+        return Text(param);
+      }
+    }
+    return const Text(
+      "Not specified.",
+      style: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
+    );
+  }
+
+  /// Devuelve los datos correspondientes si están rellenos
+  // ignore: non_constant_identifier_names
+  static Widget listAnswer(
+      BuildContext context, List<String> param, int length) {
+    if (param.isNotEmpty) {
+      if (!param[0].startsWith("http")) {
+        return SizedBox(
+          width: 300,
+          height: 50,
+          child: ListView.builder(
+              itemCount: length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(
+                    (param[index]),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                );
+              }),
+        );
+      }
+      return DropdownButton<String>(
+        hint: Text('See ${param.length}'),
+        items: param.map((String param) {
+          return DropdownMenuItem<String>(
+              value: param,
+              child: TextButton(
+                  onPressed: () {
+                    if (param.contains("/characters/")) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CharacterPage(
+                            title: "Character${param.substring(45)}",
+                            web: param,
+                          ),
+                        ),
+                      );
+                    }
+                    if (param.contains("/houses/")) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HousePage(
+                                    title: "House${param.substring(40)}",
+                                    web: param,
+                                  )));
+                    }
+                    if (param.contains("/books/")) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => BookPage(
+                                    title: "Book${param.substring(34)}",
+                                    web: param,
+                                  )));
+                    }
+                  },
+                  child: Text("See -> ${param.substring(34)}")));
+        }).toList(),
+        onChanged: (String? newValue) {
+          // Actualiza la Interfaz de Usuario si es necesario
+        },
+      );
+    }
+    return const Text(
+      "No data known.",
+      style: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
+    );
   }
 }

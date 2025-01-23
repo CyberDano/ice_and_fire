@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:ice_and_fire/Favourites.dart';
 import 'package:ice_and_fire/bookpage.dart';
-
 import 'package:ice_and_fire/classes.dart';
 import 'package:ice_and_fire/housepage.dart';
-import 'package:provider/provider.dart';
 
 class CharacterPage extends StatefulWidget {
   const CharacterPage({super.key, required this.title, required this.web});
@@ -37,8 +38,8 @@ class _CharacterPageState extends State<CharacterPage> {
       playedBy: ["Loading..."]);
   String notedText = "";
   String request = "";
+  int itemsToShow = 10;
   bool isFavourite = false;
-
   @override
   void initState() {
     LoadCharacter();
@@ -59,13 +60,11 @@ class _CharacterPageState extends State<CharacterPage> {
         } else {
           notedText = "[···]";
         }
-        notedText += ", who is a ${noted.gender.toLowerCase()} character.";
-        request = json;
-
-        // Verificar si el personaje es favorito
         final favCharacters =
             Provider.of<FavouriteCharacters>(context, listen: false);
         isFavourite = favCharacters.isFavourite(noted);
+        notedText += ", who is a ${noted.gender.toLowerCase()} character.";
+        request = json;
       }
     } catch (e) {
       notedText = "Error loading character.\n Request: $request";
@@ -88,7 +87,9 @@ class _CharacterPageState extends State<CharacterPage> {
           ),
           Text(notedText),
           if (noted.playedBy.isNotEmpty) const Text("Played by:"),
-          if (noted.playedBy.isNotEmpty) ListAnswer(noted.playedBy),
+          if (noted.playedBy.isNotEmpty)
+            Methods.listAnswer(context, noted.playedBy,
+                Methods.itemCountToShow(noted.playedBy, itemsToShow)),
           Container(
             padding: const EdgeInsets.all(20.0),
             child: SizedBox(
@@ -97,24 +98,24 @@ class _CharacterPageState extends State<CharacterPage> {
                   TableRow(children: [
                     Column(children: [
                       const Text("Culture:"),
-                      Answer(noted.culture),
+                      Methods.answer(context, noted.culture),
                     ]),
                     Column(children: [
                       const Text("Spouse:"),
-                      Answer(noted.spouse),
+                      Methods.answer(context, noted.spouse),
                     ]),
                   ]),
                   TableRow(children: [
                     Column(
                       children: [
                         const Text("Born:"),
-                        Answer(noted.born),
+                        Methods.answer(context, noted.born),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Died:"),
-                        Answer(noted.died),
+                        Methods.answer(context, noted.died),
                       ],
                     ),
                   ]),
@@ -122,13 +123,18 @@ class _CharacterPageState extends State<CharacterPage> {
                     Column(
                       children: [
                         const Text("Titles:"),
-                        ListAnswer(noted.titles),
+                        Methods.listAnswer(context, noted.titles,
+                            Methods.itemCountToShow(noted.titles, itemsToShow)),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Aliases:"),
-                        ListAnswer(noted.aliases),
+                        Methods.listAnswer(
+                            context,
+                            noted.aliases,
+                            Methods.itemCountToShow(
+                                noted.aliases, itemsToShow)),
                       ],
                     ),
                   ]),
@@ -136,13 +142,13 @@ class _CharacterPageState extends State<CharacterPage> {
                     Column(
                       children: [
                         const Text("Father:"),
-                        Answer(noted.father),
+                        Methods.answer(context, noted.father),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Mother:"),
-                        Answer(noted.mother),
+                        Methods.answer(context, noted.mother),
                       ],
                     ),
                   ]),
@@ -150,13 +156,18 @@ class _CharacterPageState extends State<CharacterPage> {
                     Column(
                       children: [
                         const Text("Allegiances:"),
-                        ListAnswer(noted.allegiances),
+                        Methods.listAnswer(
+                            context,
+                            noted.allegiances,
+                            Methods.itemCountToShow(
+                                noted.allegiances, itemsToShow)),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Books:"),
-                        ListAnswer(noted.books),
+                        Methods.listAnswer(context, noted.books,
+                            Methods.itemCountToShow(noted.books, itemsToShow)),
                       ],
                     ),
                   ]),
@@ -164,13 +175,21 @@ class _CharacterPageState extends State<CharacterPage> {
                     Column(
                       children: [
                         const Text("povBooks:"),
-                        ListAnswer(noted.povBooks),
+                        Methods.listAnswer(
+                            context,
+                            noted.povBooks,
+                            Methods.itemCountToShow(
+                                noted.povBooks, itemsToShow)),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("tvSeries:"),
-                        ListAnswer(noted.tvSeries),
+                        Methods.listAnswer(
+                            context,
+                            noted.tvSeries,
+                            Methods.itemCountToShow(
+                                noted.tvSeries, itemsToShow)),
                       ],
                     ),
                   ]),
@@ -178,16 +197,16 @@ class _CharacterPageState extends State<CharacterPage> {
               ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text("Favourite"),
-              Switch(
-                value: isFavourite,
-                onChanged: (value) => _toggleFavourite(),
-              ),
-            ],
-          ),
+          if (!isFavourite)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextButton(
+                  onPressed: _setFavourite,
+                  child: const Text("Add to favourites"),
+                )
+              ],
+            ),
         ])),
         floatingActionButton: IconButton(
           icon: const Icon(Icons.home),
@@ -195,141 +214,16 @@ class _CharacterPageState extends State<CharacterPage> {
         ));
   }
 
-  void _toggleFavourite() {
+  void _setFavourite() {
     setState(() {
-      isFavourite = !isFavourite;
       final favCharacters =
           Provider.of<FavouriteCharacters>(context, listen: false);
-
-      if (isFavourite) {
-        print("Favorito. Se debe añadir.");
-        favCharacters.addFav(noted);
-      } else if (!isFavourite && favCharacters.isFavourite(noted)) {
-        print("No favorito. Se elimina si está.");
-        favCharacters.removeFav(noted);
-      }
+      favCharacters.addFav(noted);
     });
-    final favCharacters =
-        Provider.of<FavouriteCharacters>(context, listen: false);
-    print(favCharacters.favList.length);
   }
 
 // ignore: non_constant_identifier_names
   void GoHome() {
     Navigator.popUntil(context, (route) => route.isFirst);
-  }
-
-  /// Devuelve los datos correspondientes si están rellenos
-  // ignore: non_constant_identifier_names
-  Widget Answer(String param) {
-    if (param.isNotEmpty) {
-      if (param.startsWith("http")) {
-        // Si es un enlace
-        return TextButton(
-            onPressed: () {
-              if (param.contains("/characters/")) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CharacterPage(
-                      title: "Character $param",
-                      web: param,
-                    ),
-                  ),
-                );
-              }
-              if (param.contains("/houses/")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HousePage(
-                              title: "House $param",
-                              web: param,
-                            )));
-              }
-              if (param.contains("/books/")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BookPage(
-                              title: "Book $param",
-                              web: param,
-                            )));
-              }
-            },
-            child: Text(param));
-      } else {
-        return Text(param);
-      }
-    }
-    return const Text("Not specified.");
-  }
-
-  /// Devuelve los datos correspondientes si están rellenos
-  // ignore: non_constant_identifier_names
-  Widget ListAnswer(List<String> param) {
-    if (param.isNotEmpty) {
-      if (!param[0].startsWith("http")) {
-        return SizedBox(
-          width: 300,
-          height: 50,
-          child: ListView.builder(
-              itemCount: param.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(
-                    (param[index]),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                );
-              }),
-        );
-      }
-      return DropdownButton<String>(
-        hint: Text('See ${param.length}'),
-        items: param.map((String param) {
-          return DropdownMenuItem<String>(
-              value: param,
-              child: TextButton(
-                  onPressed: () {
-                    if (param.contains("/characters/")) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CharacterPage(
-                            title: "Character $param",
-                            web: param,
-                          ),
-                        ),
-                      );
-                    }
-                    if (param.contains("/houses/")) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HousePage(
-                                    title: "House $param",
-                                    web: param,
-                                  )));
-                    }
-                    if (param.contains("/books/")) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookPage(
-                                    title: "Book $param",
-                                    web: param,
-                                  )));
-                    }
-                  },
-                  child: Text(param)));
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {});
-        },
-      );
-    }
-    return const Text("No data known.");
   }
 }

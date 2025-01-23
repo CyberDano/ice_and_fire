@@ -73,7 +73,7 @@ class _BookPageState extends State<BookPage> {
           Column(
             children: [
               const Text("ISBN:"),
-              Answer(noted.isbn),
+              Methods.answer(context, noted.isbn),
               Text("\nNow loading $itemsToShow parameters."),
               TextButton(
                 onPressed: () {
@@ -94,13 +94,17 @@ class _BookPageState extends State<BookPage> {
                     Column(
                       children: [
                         const Text("Authors:"),
-                        ListAnswer(noted.authors),
+                        Methods.listAnswer(
+                            context,
+                            noted.authors,
+                            Methods.itemCountToShow(
+                                noted.authors, itemsToShow)),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Number of pages:"),
-                        Answer("${noted.pages} pages"),
+                        Methods.answer(context, "${noted.pages} pages"),
                       ],
                     ),
                   ]),
@@ -108,13 +112,13 @@ class _BookPageState extends State<BookPage> {
                     Column(
                       children: [
                         const Text("Publisher:"),
-                        Answer(noted.publisher),
+                        Methods.answer(context, noted.publisher),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Country:"),
-                        Answer(noted.country),
+                        Methods.answer(context, noted.country),
                       ],
                     ),
                   ]),
@@ -122,13 +126,13 @@ class _BookPageState extends State<BookPage> {
                     Column(
                       children: [
                         const Text("Media type:"),
-                        Answer(noted.mediaType),
+                        Methods.answer(context, noted.mediaType),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("Released:"),
-                        Answer(noted.released),
+                        Methods.answer(context, noted.released),
                       ],
                     ),
                   ]),
@@ -136,13 +140,21 @@ class _BookPageState extends State<BookPage> {
                     Column(
                       children: [
                         const Text("Characters:"),
-                        ListAnswer(noted.characters),
+                        Methods.listAnswer(
+                            context,
+                            noted.characters,
+                            Methods.itemCountToShow(
+                                noted.characters, itemsToShow)),
                       ],
                     ),
                     Column(
                       children: [
                         const Text("POV characters:"),
-                        ListAnswer(noted.povCharacters),
+                        Methods.listAnswer(
+                            context,
+                            noted.povCharacters,
+                            Methods.itemCountToShow(
+                                noted.povCharacters, itemsToShow)),
                       ],
                     ),
                   ]),
@@ -160,119 +172,5 @@ class _BookPageState extends State<BookPage> {
   // ignore: non_constant_identifier_names
   void GoHome() {
     Navigator.popUntil(context, (route) => route.isFirst);
-  }
-
-  /// Devuelve los datos correspondientes si están rellenos
-  // ignore: non_constant_identifier_names
-  Widget Answer(String param) {
-    if (param.isNotEmpty) {
-      if (param.startsWith("http")) {
-        // Si es un enlace
-        return TextButton(
-            onPressed: () {
-              if (param.contains("/characters/")) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CharacterPage(
-                      title: "Character $param",
-                      web: param,
-                    ),
-                  ),
-                );
-              }
-              if (param.contains("/houses/")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HousePage(
-                              title: "House $param",
-                              web: param,
-                            )));
-              }
-              if (param.contains("/books/")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BookPage(
-                              title: "Book $param",
-                              web: param,
-                            )));
-              }
-            },
-            child: Text(param));
-      } else {
-        return Text(param);
-      }
-    }
-    return const Text("Not specified.");
-  }
-
-  /// Devuelve los datos correspondientes si están rellenos
-  // ignore: non_constant_identifier_names
-  Widget ListAnswer(List<String> param) {
-    if (param.isNotEmpty) {
-      if (!param[0].startsWith("http")) {
-        return SizedBox(
-          width: 300,
-          height: 50,
-          child: ListView.builder(
-              itemCount: param.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(
-                    (param[index]),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 14),
-                  ),
-                );
-              }),
-        );
-      }
-      return DropdownButton<String>(
-        hint: Text('See ${param.length}'),
-        items: param.take(itemsToShow).map((String param) {
-          return DropdownMenuItem<String>(
-              value: param,
-              child: TextButton(
-                  onPressed: () {
-                    if (param.contains("/characters/")) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CharacterPage(
-                            title: "Character $param",
-                            web: param,
-                          ),
-                        ),
-                      );
-                    }
-                    if (param.contains("/houses/")) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => HousePage(
-                                    title: "House $param",
-                                    web: param,
-                                  )));
-                    }
-                    if (param.contains("/books/")) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => BookPage(
-                                    title: "Book $param",
-                                    web: param,
-                                  )));
-                    }
-                  },
-                  child: Text(param)));
-        }).toList(),
-        onChanged: (String? newValue) {
-          setState(() {});
-        },
-      );
-    }
-    return const Text("No data known.");
   }
 }
