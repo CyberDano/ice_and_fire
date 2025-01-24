@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:ice_and_fire/bookpage.dart';
 import 'package:ice_and_fire/characterpage.dart';
 import 'package:ice_and_fire/housepage.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
 
 /// Clase para los personajes
 class Character {
@@ -194,10 +191,8 @@ class Book {
 class Methods {
   static int itemCountToShow(List<String> param, int itemsToShow) {
     if (param.length < itemsToShow) {
-      print(param.length);
       return param.length;
     }
-    print(itemsToShow);
     return itemsToShow;
   }
 
@@ -214,7 +209,7 @@ class Methods {
                   context,
                   MaterialPageRoute(
                     builder: (context) => CharacterPage(
-                      title: "Character${param.substring(45)}",
+                      title: "Character ${param.substring(45)}",
                       web: param,
                     ),
                   ),
@@ -225,7 +220,7 @@ class Methods {
                     context,
                     MaterialPageRoute(
                         builder: (context) => HousePage(
-                              title: "House${param.substring(40)}",
+                              title: "House ${param.substring(40)}",
                               web: param,
                             )));
               }
@@ -234,7 +229,7 @@ class Methods {
                     context,
                     MaterialPageRoute(
                         builder: (context) => BookPage(
-                              title: "Book${param.substring(34)}",
+                              title: "Book ${param.substring(41)}",
                               web: param,
                             )));
               }
@@ -256,6 +251,7 @@ class Methods {
       BuildContext context, List<String> param, int length) {
     if (param.isNotEmpty) {
       if (!param[0].startsWith("http")) {
+        // Si es un enlace
         return SizedBox(
           width: 300,
           height: 50,
@@ -274,7 +270,7 @@ class Methods {
       }
       return DropdownButton<String>(
         hint: Text('See ${param.length}'),
-        items: param.map((String param) {
+        items: param.take(length).map((String param) {
           return DropdownMenuItem<String>(
               value: param,
               child: TextButton(
@@ -284,7 +280,7 @@ class Methods {
                         context,
                         MaterialPageRoute(
                           builder: (context) => CharacterPage(
-                            title: "Character${param.substring(45)}",
+                            title: "Character ${param.substring(45)}",
                             web: param,
                           ),
                         ),
@@ -295,7 +291,7 @@ class Methods {
                           context,
                           MaterialPageRoute(
                               builder: (context) => HousePage(
-                                    title: "House${param.substring(40)}",
+                                    title: "House ${param.substring(41)}",
                                     web: param,
                                   )));
                     }
@@ -304,7 +300,7 @@ class Methods {
                           context,
                           MaterialPageRoute(
                               builder: (context) => BookPage(
-                                    title: "Book${param.substring(34)}",
+                                    title: "Book ${param.substring(40)}",
                                     web: param,
                                   )));
                     }

@@ -120,7 +120,7 @@ class _FavouriteScreenState extends State<Favourites> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => CharacterPage(
-                          title: "Character ${character.url}",
+                          title: "Character ${character.url.substring(45)}",
                           web: character.url,
                         ),
                       ),

@@ -25,7 +25,7 @@ class _CharactersListScreenState extends State<CharactersList> {
     loadCharacters();
   }
 
-/// Modifica el listado disminuyendo los índices
+  /// Modifica el listado disminuyendo los índices
   // ignore: non_constant_identifier_names
   void PrevPage(bool fast) {
     if (!fast) {
@@ -145,7 +145,7 @@ class _CharactersListScreenState extends State<CharactersList> {
                 context,
                 MaterialPageRoute(
                   builder: (context) => CharacterPage(
-                    title: "Character ${character.url}",
+                    title: "Character ${character.url.substring(45)}",
                     web: character.url,
                   ),
                 ),
