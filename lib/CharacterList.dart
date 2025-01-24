@@ -85,52 +85,60 @@ class _CharactersListScreenState extends State<CharactersList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            const Text(
-              "\nList of characters:",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Text("(from $initialIndex to ${finalIndex - 1}):"),
-            Container(
-              padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                width: 650,
-                height: 500,
-                child: _myListView(context),
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextButton(
-                  onPressed: () => PrevPage(true),
-                  child: const Text("<< Previous page"),
-                ),
-                TextButton(
-                  onPressed: () => PrevPage(false),
-                  child: const Text("< Previous page"),
-                ),
-                const Text("|"),
-                TextButton(
-                  onPressed: () => NextPage(false),
-                  child: const Text("Next page >"),
-                ),
-                TextButton(
-                  onPressed: () => NextPage(true),
-                  child: const Text("Next page >>"),
-                ),
-              ],
-            ),
-          ],
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
-      ),
-    );
+        body: Center(
+          child: Column(
+            children: [
+              const Text(
+                "\nList of characters:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Text("(from $initialIndex to ${finalIndex - 1}):"),
+              Container(
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+                  width: 650,
+                  height: 500,
+                  child: _myListView(context),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: () => PrevPage(true),
+                    child: const Text("<< Previous page"),
+                  ),
+                  TextButton(
+                    onPressed: () => PrevPage(false),
+                    child: const Text("< Previous page"),
+                  ),
+                  const Text("|"),
+                  TextButton(
+                    onPressed: () => NextPage(false),
+                    child: const Text("Next page >"),
+                  ),
+                  TextButton(
+                    onPressed: () => NextPage(true),
+                    child: const Text("Next page >>"),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: GoHome,
+        ));
+  }
+
+// ignore: non_constant_identifier_names
+  void GoHome() {
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   Widget _myListView(BuildContext context) {

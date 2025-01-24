@@ -80,30 +80,38 @@ class _FavouriteScreenState extends State<Favourites> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Your favourites"),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            const Text(
-              "\nFavourite characters:",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            Container(
-              color: const Color.fromARGB(100, 255, 214, 100),
-              padding: const EdgeInsets.all(20.0),
-              child: SizedBox(
-                width: 400,
-                height: 700,
-                child: _myListView(context),
-              ),
-            ),
-          ],
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: const Text("Your favourites"),
         ),
-      ),
-    );
+        body: Center(
+          child: Column(
+            children: [
+              const Text(
+                "\nFavourite characters:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Container(
+                color: const Color.fromARGB(100, 255, 214, 100),
+                padding: const EdgeInsets.all(20.0),
+                child: SizedBox(
+                  width: 400,
+                  height: 700,
+                  child: _myListView(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+        floatingActionButton: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: GoHome,
+        ));
+  }
+
+// ignore: non_constant_identifier_names
+  void GoHome() {
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   Widget _myListView(BuildContext context) {
