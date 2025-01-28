@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
             seedColor: const Color.fromARGB(255, 100, 167, 255)),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 200, 255, 200),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Ice and Fire'),

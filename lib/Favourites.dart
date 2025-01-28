@@ -92,7 +92,7 @@ class _FavouriteScreenState extends State<Favourites> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Container(
-                color: const Color.fromARGB(100, 255, 214, 100),
+                color: const Color.fromARGB(255, 255, 255, 0),
                 padding: const EdgeInsets.all(20.0),
                 child: SizedBox(
                   width: 400,
