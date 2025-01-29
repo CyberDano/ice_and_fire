@@ -7,14 +7,11 @@ import 'dart:math';
 import 'package:ice_and_fire/classes.dart';
 import 'package:ice_and_fire/CharacterList.dart';
 import 'package:ice_and_fire/Favourites.dart';
-import 'package:ice_and_fire/housepage.dart';
-import 'package:ice_and_fire/bookpage.dart';
-import 'package:ice_and_fire/characterpage.dart';
 
 void main() {
   runApp(ChangeNotifierProvider(
     create: (context) => FavouriteCharacters(),
-    child: MyApp(),
+    child: const MyApp(),
   ));
 }
 
@@ -102,144 +99,165 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-          child: Column(children: [
-        const Text(
-          "\nNoted character:",
-          style: TextStyle(fontWeight: FontWeight.bold),
+        appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(widget.title),
         ),
-        Text(notedText),
-        if (noted.playedBy.isNotEmpty) const Text("Played by:"),
-        if (noted.playedBy.isNotEmpty)
-          Methods.listAnswer(context, noted.playedBy,
-              Methods.itemCountToShow(noted.playedBy, itemsToShow)),
-        Container(
-          padding: const EdgeInsets.all(20.0),
-          child: SizedBox(
-            child: Table(
+        body: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Center(
+              child: Column(children: [
+            Image.network(
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Game_of_Thrones_2011_logo.svg/250px-Game_of_Thrones_2011_logo.svg.png",
+              fit: BoxFit.cover,
+            ),
+            const Text(
+              "\nNoted character:",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(notedText),
+            if (noted.playedBy.isNotEmpty) const Text("Played by:"),
+            if (noted.playedBy.isNotEmpty)
+              Methods.listAnswer(context, noted.playedBy,
+                  Methods.itemCountToShow(noted.playedBy, itemsToShow)),
+            Container(
+              padding: const EdgeInsets.all(20.0),
+              child: SizedBox(
+                child: Table(
+                  children: [
+                    TableRow(children: [
+                      Column(children: [
+                        const Text("Culture:"),
+                        Methods.answer(context, noted.culture),
+                      ]),
+                      Column(children: [
+                        const Text("Spouse:"),
+                        Methods.answer(context, noted.spouse),
+                      ]),
+                    ]),
+                    TableRow(children: [
+                      Column(
+                        children: [
+                          const Text("Born:"),
+                          Methods.answer(context, noted.born),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text("Died:"),
+                          Methods.answer(context, noted.died),
+                        ],
+                      ),
+                    ]),
+                    TableRow(children: [
+                      Column(
+                        children: [
+                          const Text("Titles:"),
+                          Methods.listAnswer(
+                              context,
+                              noted.titles,
+                              Methods.itemCountToShow(
+                                  noted.titles, itemsToShow)),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text("Aliases:"),
+                          Methods.listAnswer(
+                              context,
+                              noted.aliases,
+                              Methods.itemCountToShow(
+                                  noted.aliases, itemsToShow)),
+                        ],
+                      ),
+                    ]),
+                    TableRow(children: [
+                      Column(
+                        children: [
+                          const Text("Father:"),
+                          Methods.answer(context, noted.father),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text("Mother:"),
+                          Methods.answer(context, noted.mother),
+                        ],
+                      ),
+                    ]),
+                    TableRow(children: [
+                      Column(
+                        children: [
+                          const Text("Allegiances:"),
+                          Methods.listAnswer(
+                              context,
+                              noted.allegiances,
+                              Methods.itemCountToShow(
+                                  noted.allegiances, itemsToShow)),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text("Books:"),
+                          Methods.listAnswer(
+                              context,
+                              noted.books,
+                              Methods.itemCountToShow(
+                                  noted.books, itemsToShow)),
+                        ],
+                      ),
+                    ]),
+                    TableRow(children: [
+                      Column(
+                        children: [
+                          const Text("povBooks:"),
+                          Methods.listAnswer(
+                              context,
+                              noted.povBooks,
+                              Methods.itemCountToShow(
+                                  noted.povBooks, itemsToShow)),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text("tvSeries:"),
+                          Methods.listAnswer(
+                              context,
+                              noted.tvSeries,
+                              Methods.itemCountToShow(
+                                  noted.tvSeries, itemsToShow)),
+                        ],
+                      ),
+                    ]),
+                  ],
+                ),
+              ),
+            ),
+            if (!isFavourite)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextButton(
+                    onPressed: _setFavourite,
+                    child: const Text("Add to favourites"),
+                  )
+                ],
+              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                TableRow(children: [
-                  Column(children: [
-                    const Text("Culture:"),
-                    Answer(noted.culture),
-                  ]),
-                  Column(children: [
-                    const Text("Spouse:"),
-                    Answer(noted.spouse),
-                  ]),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Born:"),
-                      Answer(noted.born),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Died:"),
-                      Answer(noted.died),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Titles:"),
-                      Methods.listAnswer(context, noted.titles,
-                          Methods.itemCountToShow(noted.titles, itemsToShow)),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Aliases:"),
-                      Methods.listAnswer(context, noted.aliases,
-                          Methods.itemCountToShow(noted.aliases, itemsToShow)),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Father:"),
-                      Answer(noted.father),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Mother:"),
-                      Answer(noted.mother),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("Allegiances:"),
-                      Methods.listAnswer(
-                          context,
-                          noted.allegiances,
-                          Methods.itemCountToShow(
-                              noted.allegiances, itemsToShow)),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("Books:"),
-                      Methods.listAnswer(context, noted.books,
-                          Methods.itemCountToShow(noted.books, itemsToShow)),
-                    ],
-                  ),
-                ]),
-                TableRow(children: [
-                  Column(
-                    children: [
-                      const Text("povBooks:"),
-                      Methods.listAnswer(context, noted.povBooks,
-                          Methods.itemCountToShow(noted.povBooks, itemsToShow)),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      const Text("tvSeries:"),
-                      Methods.listAnswer(context, noted.tvSeries,
-                          Methods.itemCountToShow(noted.tvSeries, itemsToShow)),
-                    ],
-                  ),
-                ]),
+                TextButton(
+                  onPressed: SeeCharactersScreen,
+                  child: const Text("See all characters"),
+                ),
+                TextButton(
+                  onPressed: FavouritesScreen,
+                  child: const Text("My favourites"),
+                ),
               ],
             ),
-          ),
-        ),
-        if (!isFavourite)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextButton(
-                onPressed: _setFavourite,
-                child: const Text("Add to favourites"),
-              )
-            ],
-          ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton(
-              onPressed: SeeCharactersScreen,
-              child: const Text("See all characters"),
-            ),
-            TextButton(
-              onPressed: FavouritesScreen,
-              child: const Text("My favourites"),
-            ),
-          ],
-        ),
-      ])),
-    );
+          ])),
+        ));
   }
 
   void _setFavourite() {
@@ -267,54 +285,5 @@ class _MyHomePageState extends State<MyHomePage> {
         context,
         MaterialPageRoute(
             builder: (context) => const Favourites(title: "My favourites")));
-  }
-
-  /// Devuelve los datos correspondientes si están rellenos
-  // ignore: non_constant_identifier_names
-  Widget Answer(String param) {
-    if (param.isNotEmpty) {
-      if (param.startsWith("http")) {
-        // Si es un enlace
-        return TextButton(
-            onPressed: () {
-              if (param.contains("/characters/")) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CharacterPage(
-                      title: "Character $param",
-                      web: param,
-                    ),
-                  ),
-                );
-              }
-              if (param.contains("/houses/")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => HousePage(
-                              title: "House $param",
-                              web: param,
-                            )));
-              }
-              if (param.contains("/books/")) {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => BookPage(
-                              title: "Book $param",
-                              web: param,
-                            )));
-              }
-            },
-            child: const Text("See ->"));
-      } else {
-        return Text(param);
-      }
-    }
-    return const Text(
-      "Not specified.",
-      style: TextStyle(color: Color.fromARGB(255, 255, 0, 0)),
-    );
   }
 }

@@ -85,6 +85,18 @@ class Character {
   }
 }
 
+class StringCharacter {
+  final String url;
+  final String name;
+
+  const StringCharacter({required this.url, required this.name});
+
+  // Método para crear una instancia de Character a partir de JSON
+  factory StringCharacter.fromJson(Map<String, dynamic> json) {
+    return StringCharacter(url: json['url'], name: json['name']);
+  }
+}
+
 /// Clase para las casas
 class House {
   final String url;

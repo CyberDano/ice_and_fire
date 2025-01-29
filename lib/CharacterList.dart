@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -14,10 +15,11 @@ class CharactersList extends StatefulWidget {
 }
 
 class _CharactersListScreenState extends State<CharactersList> {
-  List<Character> littleList = [];
+  List<StringCharacter> littleList = [];
   String web = "https://anapioficeandfire.com/api/characters/";
   int initialIndex = 1;
   int finalIndex = 11;
+  bool loading = true;
 
   @override
   void initState() {
@@ -32,6 +34,9 @@ class _CharactersListScreenState extends State<CharactersList> {
       if ((initialIndex - 10) > 0) {
         initialIndex -= 10;
         finalIndex -= 10;
+        setState(() {
+          loading = true;
+        });
         loadCharacters();
       }
     }
@@ -39,6 +44,9 @@ class _CharactersListScreenState extends State<CharactersList> {
       if ((initialIndex - 20) > 0) {
         initialIndex -= 20;
         finalIndex -= 20;
+        setState(() {
+          loading = true;
+        });
         loadCharacters();
       }
     }
@@ -51,6 +59,9 @@ class _CharactersListScreenState extends State<CharactersList> {
       if (finalIndex + 10 < 2135) {
         initialIndex += 10;
         finalIndex += 10;
+        setState(() {
+          loading = true;
+        });
         loadCharacters();
       }
     }
@@ -58,28 +69,36 @@ class _CharactersListScreenState extends State<CharactersList> {
       if (finalIndex + 20 < 2135) {
         initialIndex += 20;
         finalIndex += 20;
+        setState(() {
+          loading = true;
+        });
         loadCharacters();
       }
     }
   }
 
   void loadCharacters() async {
-    if (littleList.isNotEmpty) littleList.removeRange(0, littleList.length);
+    try {
+      littleList.removeRange(0, littleList.length);
+      // ignore: empty_catches
+    } catch (e) {}
     try {
       for (int i = initialIndex; i < finalIndex; i++) {
         final url = Uri.parse("$web$i");
         final response = await http.get(url);
         if (response.statusCode == 200) {
           final json = response.body;
-          final Character novel = Character.fromJson(jsonDecode(json));
-          setState(() {
-            littleList.add(novel);
-          });
+          final StringCharacter novel =
+              StringCharacter.fromJson(jsonDecode(json));
+          littleList.add(novel);
         }
       }
     } catch (e) {
       print("Error loading characters from $web");
     }
+    setState(() {
+      loading = false;
+    });
   }
 
   @override
@@ -97,14 +116,24 @@ class _CharactersListScreenState extends State<CharactersList> {
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               Text("(from $initialIndex to ${finalIndex - 1}):"),
-              Container(
-                padding: const EdgeInsets.all(20.0),
-                child: SizedBox(
-                  width: 650,
-                  height: 500,
-                  child: _myListView(context),
+              if (!loading)
+                Container(
+                  color: const Color.fromARGB(255, 255, 176, 209),
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    width: 350,
+                    height: 500,
+                    child: _myListView(context),
+                  ),
                 ),
-              ),
+              if (loading)
+                const Center(
+                  child: SizedBox(
+                    height: 50,
+                    width: 50,
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
